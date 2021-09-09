@@ -7,18 +7,12 @@
         name="OpenStreetMap"
         :max-zoom="MAX_ZOOM"
       />
-      <!-- <l-tile-layer
-        url="https://s3.amazonaws.com/te512.safecast.org/{z}/{x}/{y}.png"
-        attribution="<a href='https://blog.safecast.org/about/'>SafeCast</a> (<a href='https://creativecommons.org/licenses/by-sa/3.0/'>CC-BY-SA</a>"
-        :min-zoom="5"
-        :max-zoom="7"
-      />-->
-
-      <l-marker draggable v-model:lat-lng="markerPos" @moveend="onMoveMarker" />
+      <l-marker draggable v-model:lat-lng="markerPos" />
     </l-map>
 
-    <div class="paramers-editor row">
+    <div class="paramers-editor column q-ma-md">
       <q-input
+        outlined
         class="col-2"
         label="Zoom"
         hint="zoom"
@@ -28,20 +22,24 @@
         v-model.number="zoom"
       />
       <q-input
+        outlined
         class="col-4"
         label="Latitude"
         hint="lat"
         type="number"
+        :step="COORDS_STEP"
         :max="180"
         :min="-180"
         v-model.number="markerPosLat"
       />
       {{ markerPos.lng }}
       <q-input
+        outlined
         class="col-4"
         label="Longitude"
         hint="lng"
         type="number"
+        :step="COORDS_STEP"
         :max="180"
         :min="-180"
         v-model.number="markerPosLng"
@@ -57,18 +55,35 @@ import L from 'leaflet'
 import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet"
 export default defineComponent({
   name: 'LeafletMap',
+  props: {
+    initLat: {
+      type: Number,
+    },
+    initLng: {
+      type: Number,
+    },
+    initZoom: {
+      type: Number,
+    },
+    initMapCenter: {
+      type: [Object, Array],
+    },
+
+  },
   components: {
     LMap,
     LTileLayer,
     LMarker,
   },
-  data() {
+  emits: ['update'],
+  data(vm) {
     return {
-      zoom: 2,
-      markerPosLng: 34.76845,
-      markerPosLat: 32.063,
-      mapCenter: { lat: 34.76845, lng: 32.063 },
+      zoom: vm.initZoom ?? 2,
+      markerPosLat: vm.initLat ?? 32.063,
+      markerPosLng: vm.initLng ?? 34.76845,
+      mapCenter: vm.initMapCenter ?? { lat: 34.76845, lng: 32.063 },
       MAX_ZOOM: 19,
+      COORDS_STEP: 0.01,
     };
   },
   computed: {
@@ -89,19 +104,6 @@ export default defineComponent({
       }
     }
   },
-  methods: {
-    onMoveMarker(evt) {
-      console.log('map', this.$refs.map)
-      console.log('map center', this.$refs.map?.center)
-      console.log('marker moved', evt)
-      console.log('target', evt.target._latlng)
-      console.log('sourceTarget', evt.sourceTarget._latlng)
-      console.log('zoom', this.zoom)
-      console.log('markerPos', this.markerPos)
-      console.log('mapCenter', this.mapCenter)
-      // this.markerPos = evt.target
-    }
-  }
 })
 </script>
 
