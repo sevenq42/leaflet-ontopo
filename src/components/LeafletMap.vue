@@ -1,6 +1,6 @@
 <template>
   <div class="leaflet-map" style="direction: rtl;">
-    <l-map ref="map" v-model:zoom="zoom" v-model:center="mapCenter">
+    <l-map ref="map" v-model:zoom="zoom" v-model:center="mapCenter" @click="onMapClick">
       <l-tile-layer
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
         layer-type="base"
@@ -32,7 +32,6 @@
         :min="-180"
         v-model.number="markerPosLat"
       />
-      {{ markerPos.lng }}
       <q-input
         outlined
         class="col-4"
@@ -76,7 +75,7 @@ export default defineComponent({
     LMarker,
   },
   emits: ['update'],
-  data(vm) {
+  data (vm) {
     return {
       zoom: vm.initZoom ?? 2,
       markerPosLat: vm.initLat ?? 32.063,
@@ -88,13 +87,13 @@ export default defineComponent({
   },
   computed: {
     markerPos: {
-      get() {
+      get () {
         return {
           lat: this.markerPosLat,
           lng: this.markerPosLng,
         }
       },
-      set(newVal) {
+      set (newVal) {
         if (newVal.lng && this.markerPosLng !== newVal.lng) {
           this.markerPosLng = newVal.lng
         }
@@ -104,6 +103,12 @@ export default defineComponent({
       }
     }
   },
+  methods: {
+    onMapClick (evt) {
+      if (!evt.latlng) return
+      this.markerPos = evt.latlng
+    }
+  }
 })
 </script>
 
