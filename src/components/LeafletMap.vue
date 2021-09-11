@@ -7,7 +7,7 @@
         name="OpenStreetMap"
         :max-zoom="MAX_ZOOM"
       />
-      <l-marker draggable v-model:lat-lng="markerPos" />
+      <l-marker draggable v-model:lat-lng="markerPos" :icon="markerIcon" />
     </l-map>
 
     <div class="paramers-editor column q-ma-md">
@@ -51,7 +51,7 @@
 import { defineComponent } from "vue"
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
-import { LMap, LTileLayer, LMarker } from "@vue-leaflet/vue-leaflet"
+import { LMap, LTileLayer, LMarker, LD } from "@vue-leaflet/vue-leaflet"
 export default defineComponent({
   name: 'LeafletMap',
   props: {
@@ -83,6 +83,11 @@ export default defineComponent({
       mapCenter: vm.initMapCenter ?? { lat: 34.76845, lng: 32.063 },
       MAX_ZOOM: 19,
       COORDS_STEP: 0.01,
+      markerIcon: L.divIcon({
+        iconSize: [120, 40],
+        className: 'my-div-icon',
+        html: "<b>vasyas</b><button size='md' title='petya' onclick='console.log(123)'/>"
+      })
     };
   },
   computed: {
@@ -141,5 +146,10 @@ export default defineComponent({
 .leaflet-map {
   height: 600px;
   width: 800px;
+
+  ::v-deep(.my-div-icon) {
+    transform: rotate(45deg);
+    background-color: red;
+  }
 }
 </style>
